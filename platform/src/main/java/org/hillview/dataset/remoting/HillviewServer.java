@@ -42,7 +42,6 @@ import org.hillview.utils.JsonList;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
-import sun.nio.ch.PollSelectorProvider;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -76,10 +75,8 @@ public class HillviewServer extends HillviewServerGrpc.HillviewServerImplBase {
 
     // Using PollSelectorProvider() to avoid Epoll CPU utilization problems.
     // See: https://github.com/netty/netty/issues/327
-    private final EventLoopGroup workerElg = new NioEventLoopGroup(1,
-            ExecutorUtils.newFastLocalThreadFactory("worker"), new PollSelectorProvider());
-    private final EventLoopGroup bossElg = new NioEventLoopGroup(1,
-            ExecutorUtils.newFastLocalThreadFactory("boss"), new PollSelectorProvider());
+    private final EventLoopGroup workerElg = new NioEventLoopGroup(1, ExecutorUtils.newFastLocalThreadFactory("worker"));
+    private final EventLoopGroup bossElg = new NioEventLoopGroup(1, ExecutorUtils.newFastLocalThreadFactory("boss"));
     private final Server server;
     private final AtomicInteger dsIndex = new AtomicInteger(0);
     private final ConcurrentHashMap<Integer, IDataSet> dataSets;
