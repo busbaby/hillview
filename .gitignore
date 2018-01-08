@@ -22,7 +22,6 @@ cpp/main
 */.idea/libraries
 */.idea/uiDesigner.xml
 */.idea/codeStyles
-platform/platform.iml
 web/web.iml
 
 TAGS

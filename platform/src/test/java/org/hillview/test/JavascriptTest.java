@@ -22,7 +22,6 @@ import org.hillview.dataset.api.IDataSet;
 import org.hillview.maps.CreateColumnJSMap;
 import org.hillview.table.ColumnDescription;
 import org.hillview.table.api.ContentsKind;
-import org.hillview.table.api.IMembershipSet;
 import org.hillview.table.api.IRowIterator;
 import org.hillview.table.api.ITable;
 import org.hillview.table.membership.SparseMembershipSet;
@@ -56,7 +55,7 @@ public class JavascriptTest {
         ScriptEngineManager factory = new ScriptEngineManager();
         ScriptEngine engine = factory.getEngineByName("nashorn");
         engine.eval("function getField(row, col) { return row[col]; }");
-        Invocable invocable = (Invocable)engine;
+        Invocable invocable = (Invocable) engine;
         Object value = invocable.invokeFunction("getField", row, "Name");
         Assert.assertEquals(value, "Mike");
 
@@ -80,12 +79,16 @@ public class JavascriptTest {
         String function = "function map(row) { return row['Age'] > 18 ? 'true' : 'false'; }";
         CreateColumnJSMap map = new CreateColumnJSMap(function, table.getSchema(), outCol);
         IDataSet<ITable> mapped = lds.blockingMap(map);
-        ITable outTable = ((LocalDataSet<ITable>)mapped).data;
+        ITable outTable = ((LocalDataSet<ITable>) mapped).data;
         String data = outTable.toLongString(3);
-        Assert.assertEquals("Table[3x15]\n" +
-                "Mike,20,true\n" +
-                "John,30,true\n" +
-                "Tom,10,false\n", data);
+        Assert.assertEquals(
+                String.join(System.getProperty("line.separator"),
+                        "Table[3x15]",
+                        "Mike,20,true",
+                        "John,30,true",
+                        "Tom,10,false",
+                        ""),
+                data);
     }
 
     @Test
@@ -96,7 +99,7 @@ public class JavascriptTest {
         String function = "function map(row) { return new Date(1970 + row['Age'], 1, 2); }";
         CreateColumnJSMap map = new CreateColumnJSMap(function, table.getSchema(), outCol);
         IDataSet<ITable> mapped = lds.blockingMap(map);
-        ITable outTable = ((LocalDataSet<ITable>)mapped).data;
+        ITable outTable = ((LocalDataSet<ITable>) mapped).data;
         String data = outTable.toLongString(3);
 
         String someDate = "1990-02-02";
@@ -104,10 +107,14 @@ public class JavascriptTest {
         Instant someInstant = parsing.parse(someDate);
         String s = someInstant.toString();
         String suffix = s.substring(s.indexOf('T'));
-        Assert.assertEquals("Table[3x15]\n" +
-                "Mike,20,1990-02-02" + suffix + "\n" +
-                "John,30,2000-02-02" + suffix + "\n" +
-                "Tom,10,1980-02-02" + suffix + "\n", data);
+        Assert.assertEquals(
+                String.join(System.getProperty("line.separator"),
+                        "Table[3x15]",
+                        "Mike,20,1990-02-02" + suffix,
+                        "John,30,2000-02-02" + suffix,
+                        "Tom,10,1980-02-02" + suffix,
+                        ""),
+                data);
     }
 
     @Test
@@ -118,12 +125,16 @@ public class JavascriptTest {
         String function = "function map(row) { return row['Age'] + 10; }";
         CreateColumnJSMap map = new CreateColumnJSMap(function, table.getSchema(), outCol);
         IDataSet<ITable> mapped = lds.blockingMap(map);
-        ITable outTable = ((LocalDataSet<ITable>)mapped).data;
+        ITable outTable = ((LocalDataSet<ITable>) mapped).data;
         String data = outTable.toLongString(3);
-        Assert.assertEquals("Table[3x15]\n" +
-                "Mike,20,30\n" +
-                "John,30,40\n" +
-                "Tom,10,20\n", data);
+        Assert.assertEquals(
+                String.join(System.getProperty("line.separator"),
+                        "Table[3x15]",
+                        "Mike,20,30",
+                        "John,30,40",
+                        "Tom,10,20",
+                        ""),
+                data);
     }
 
     @Test
@@ -140,9 +151,13 @@ public class JavascriptTest {
         IDataSet<ITable> mapped = lds.blockingMap(map);
         ITable outTable = ((LocalDataSet<ITable>) mapped).data;
         String data = outTable.toLongString(3);
-        Assert.assertEquals("Table[3x2]\n" +
-                "Mike,20,30\n" +
-                "John,30,40\n", data);
+        Assert.assertEquals(
+                String.join(System.getProperty("line.separator"),
+                        "Table[3x2]",
+                        "Mike,20,30",
+                        "John,30,40",
+                        ""),
+                data);
     }
 
     @Test
@@ -163,7 +178,7 @@ public class JavascriptTest {
                 " }";
         map = new CreateColumnJSMap(function, table.getSchema(), outCol);
         mapped = mapped.blockingMap(map);
-        ITable outTable = ((LocalDataSet<ITable>)mapped).data;
+        ITable outTable = ((LocalDataSet<ITable>) mapped).data;
         String data = outTable.toLongString(3);
 
         String someDate = "1990-02-02";
@@ -171,9 +186,13 @@ public class JavascriptTest {
         Instant someInstant = parsing.parse(someDate);
         String s = someInstant.toString();
         String suffix = s.substring(s.indexOf('T'));
-        Assert.assertEquals("Table[4x15]\n" +
-                "Mike,20,1990-02-02" + suffix + ",2000-02-02" + suffix + "\n" +
-                "John,30,2000-02-02" + suffix + ",2010-02-02" + suffix + "\n" +
-                "Tom,10,1980-02-02" + suffix + ",1990-02-02" + suffix + "\n", data);
+        Assert.assertEquals(
+                String.join(System.getProperty("line.separator"),
+                        "Table[4x15]",
+                        "Mike,20,1990-02-02" + suffix + ",2000-02-02" + suffix,
+                        "John,30,2000-02-02" + suffix + ",2010-02-02" + suffix,
+                        "Tom,10,1980-02-02" + suffix + ",1990-02-02" + suffix,
+                        ""),
+                data);
     }
 }

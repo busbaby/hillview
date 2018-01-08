@@ -56,12 +56,15 @@ public class NextKSketchTest extends BaseTest {
         for (int i = 0; i < (leftK.table.getNumOfRows() - 1); i++)
             Assert.assertTrue(leftComp.compare(i, i + 1) <= 0);
         //System.out.println(leftK.toLongString(maxSize));
-        Assert.assertEquals(leftK.toLongString(maxSize), "Table[2x5]\n" +
-                "14,4: 6\n" +
-                "14,5: 5\n" +
-                "14,6: 4\n" +
-                "14,7: 3\n" +
-                "14,8: 5\n");
+        Assert.assertEquals(leftK.toLongString(maxSize),
+                String.join(System.getProperty("line.separator"),
+                        "Table[2x5]",
+                        "14,4: 6",
+                        "14,5: 5",
+                        "14,6: 4",
+                        "14,7: 3",
+                        "14,8: 5",
+                        ""));
 
         final RowSnapshot topRow2 = new RowSnapshot(leftTable, 100);
         Assert.assertEquals(topRow2.toString(), "4,4");
@@ -71,36 +74,45 @@ public class NextKSketchTest extends BaseTest {
         IndexComparator leftComp2 = cso.getComparator(leftK2.table);
         for (int i = 0; i < (leftK2.table.getNumOfRows() - 1); i++)
             Assert.assertTrue(leftComp2.compare(i, i + 1) <= 0);
-        Assert.assertEquals(leftK2.toLongString(maxSize), "Table[2x5]\n" +
-                "4,4: 12\n" +
-                "4,5: 2\n" +
-                "4,6: 5\n" +
-                "4,7: 4\n" +
-                "4,8: 5\n");
+        Assert.assertEquals(leftK2.toLongString(maxSize),
+                String.join(System.getProperty("line.separator"),
+                        "Table[2x5]",
+                        "4,4: 12",
+                        "4,5: 2",
+                        "4,6: 5",
+                        "4,7: 4",
+                        "4,8: 5",
+                        ""));
         final Table rightTable = TestTables.getRepIntTable(rightSize, numCols);
         final NextKList rightK = nk.create(rightTable);
         IndexComparator rightComp = cso.getComparator(rightK.table);
         for (int i = 0; i < (rightK.table.getNumOfRows() - 1); i++)
             Assert.assertTrue(rightComp.compare(i, i + 1) <= 0);
 
-        Assert.assertEquals(rightK.toLongString(maxSize), "Table[2x5]\n" +
-                "14,4: 6\n" +
-                "14,5: 5\n" +
-                "14,6: 4\n" +
-                "14,7: 3\n" +
-                "14,8: 5\n");
+        Assert.assertEquals(rightK.toLongString(maxSize),
+                String.join(System.getProperty("line.separator"),
+                        "Table[2x5]",
+                        "14,4: 6",
+                        "14,5: 5",
+                        "14,6: 4",
+                        "14,7: 3",
+                        "14,8: 5",
+                        ""));
 
         NextKList tK = nk.add(leftK, rightK);
         tK = Converters.checkNull(tK);
         IndexComparator tComp = cso.getComparator(tK.table);
         for (int i = 0; i < (tK.table.getNumOfRows() - 1); i++)
             Assert.assertTrue(tComp.compare(i, i + 1) <= 0);
-        Assert.assertEquals(tK.toLongString(maxSize), "Table[2x5]\n" +
-                "14,4: 12\n" +
-                "14,5: 10\n" +
-                "14,6: 8\n" +
-                "14,7: 6\n" +
-                "14,8: 10\n");
+        Assert.assertEquals(tK.toLongString(maxSize),
+                String.join(System.getProperty("line.separator"),
+                        "Table[2x5]",
+                        "14,4: 12",
+                        "14,5: 10",
+                        "14,6: 8",
+                        "14,7: 6",
+                        "14,8: 10",
+                        ""));
     }
 
     @Test
@@ -110,14 +122,17 @@ public class NextKSketchTest extends BaseTest {
         final int leftSize = 1000;
         final Table leftTable = TestTables.getRepIntTable(leftSize, numCols);
         final RowSnapshot topRow = new RowSnapshot(leftTable, 10);
-        Assert.assertEquals(leftTable.toLongString(5), "Table[2x1000]\n" +
-                "9,10\n" +
-                "5,4\n" +
-                "8,10\n" +
-                "0,3\n" +
-                "7,8\n");
+        Assert.assertEquals(leftTable.toLongString(5),
+                String.join(System.getProperty("line.separator"),
+                        "Table[2x1000]",
+                        "9,10",
+                        "5,4",
+                        "8,10",
+                        "0,3",
+                        "7,8",
+                        ""));
         RecordOrder cso = new RecordOrder();
-        final NextKSketch nk= new NextKSketch(cso, topRow, maxSize);
+        final NextKSketch nk = new NextKSketch(cso, topRow, maxSize);
         final NextKList leftK = nk.create(leftTable);
         Assert.assertEquals(leftK.table.getNumOfRows(), 0);
     }
@@ -138,12 +153,15 @@ public class NextKSketchTest extends BaseTest {
         IndexComparator mComp = cso.getComparator(nk.table);
         for (int i = 0; i < (nk.table.getNumOfRows() - 1); i++)
             Assert.assertTrue(mComp.compare(i, i + 1) <= 0);
-        Assert.assertEquals(nk.toLongString(maxSize), "Table[3x5]\n" +
-                "44,95,56: 1\n" +
-                "44,95,119: 1\n" +
-                "44,95,126: 1\n" +
-                "44,95,151: 1\n" +
-                "44,96,65: 1\n");
+        Assert.assertEquals(nk.toLongString(maxSize),
+                String.join(System.getProperty("line.separator"),
+                        "Table[3x5]",
+                        "44,95,56: 1",
+                        "44,95,119: 1",
+                        "44,95,126: 1",
+                        "44,95,151: 1",
+                        "44,96,65: 1",
+                        ""));
     }
 
     @Test
@@ -174,15 +192,21 @@ public class NextKSketchTest extends BaseTest {
     }
 
     @Test
-    public  void TestTopK5() {
+    public void TestTopK5() {
         Table t = TestTables.testTable();
         RecordOrder ro = new RecordOrder();
         ro.append(new ColumnSortOrientation(t.getSchema().getDescription("Age"), true));
         ro.append(new ColumnSortOrientation(t.getSchema().getDescription("Name"), true));
-        String sb = "Table[2x13]\nBill,1: 1\nBill,2: 1\n" +
-                    "Smith,3: 1\nDonald,4: 1\nBruce,5: 1\n";
+        String sb = String.join(System.getProperty("line.separator"),
+                "Table[2x13]",
+                "Bill,1: 1",
+                "Bill,2: 1",
+                "Smith,3: 1",
+                "Donald,4: 1",
+                "Bruce,5: 1",
+                "");
         NextKSketch nks = new NextKSketch(ro, null, 20);
-        Assert.assertEquals(sb,nks.create(t).toLongString(5));
+        Assert.assertEquals(sb, nks.create(t).toLongString(5));
     }
 
     /**

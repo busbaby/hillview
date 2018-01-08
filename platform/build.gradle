@@ -1,0 +1,110 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+repositories {
+    jcenter()
+}
+
+group = 'org.hillview'
+version = '1.0-SNAPSHOT'
+
+description = "platform"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+    compile group: 'it.unimi.dsi', name: 'dsiutils', version: '2.4.0'
+    compile group: 'com.univocity', name: 'univocity-parsers', version: '2.5.5'
+    compile(group: 'org.apache.hadoop', name: 'hadoop-common', version: '2.8.0') {
+        exclude(module: 'protobuf-java')
+        exclude(module: 'slf4j-log4j12')
+        exclude(module: 'log4j')
+    }
+    compile(group: 'org.apache.parquet', name: 'parquet-column', version: '1.9.0') {
+        exclude(module: 'slf4j-log4j12')
+        exclude(module: 'log4j')
+    }
+    compile group: 'org.apache.parquet', name: 'parquet-hadoop', version: '1.9.0'
+    compile group: 'com.google.guava', name: 'guava', version: '20.0'
+    compile group: 'io.grpc', name: 'grpc-netty', version: '1.6.1'
+    compile group: 'io.grpc', name: 'grpc-protobuf', version: '1.6.1'
+    compile group: 'io.grpc', name: 'grpc-stub', version: '1.6.1'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
+    compile group: 'io.reactivex', name: 'rxjava', version: '1.2.9'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    compile group: 'net.openhft', name: 'zero-allocation-hashing', version: '0.8'
+    compile group: 'org.jblas', name: 'jblas', version: '1.2.4'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'com.github.stephenc.jcip', name: 'jcip-annotations', version: '1.0-1'
+}
+
+protobuf {
+    repositories {
+        mavenCentral()
+    }
+
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.3.0'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.6.1'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {
+                outputSubDir = 'java'
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java")
+    }
+}
+
+task serverJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    manifest {
+        attributes 'Main-Class': 'org.hillview.HillviewServerRunner'
+    }
+    baseName 'hillview-server'
+    version null
+    classifier = 'jar-with-dependencies'
+    from sourceSets.main.output
+    configurations = [project.configurations.compile]
+}
+
+task dataCleanerJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    manifest {
+        attributes 'Main-Class': 'org.hillview.DemoDataCleaner'
+    }
+    baseName 'data-cleaner'
+    version null
+    classifier = 'jar-with-dependencies'
+    from sourceSets.main.output
+    configurations = [project.configurations.compile]
+}
+
+jar.enabled = false
+build.dependsOn serverJar, dataCleanerJar

@@ -84,6 +84,7 @@ public class CsvFileLoader extends TextFileLoader {
             settings.setIgnoreTrailingWhitespaces(true);
             settings.setEmptyValue("");
             settings.setNullValue(null);
+            settings.getFormat().setLineSeparator("\n");
             if (this.actualSchema != null)
                 settings.setMaxColumns(this.actualSchema.getColumnCount());
             else
