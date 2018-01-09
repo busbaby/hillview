@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
     }
 }
 
@@ -106,5 +106,4 @@ task dataCleanerJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.Shado
     configurations = [project.configurations.compile]
 }
 
-jar.enabled = false
 build.dependsOn serverJar, dataCleanerJar
