@@ -9,7 +9,7 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
+apply plugin: 'war'
 apply plugin: "com.moowork.node"
 
 group = 'org.hillview'
@@ -42,7 +42,7 @@ dependencies {
 
 node {
     download = true
-    nodeModulesDir = file("${project.projectDir}/src/main/webapp")
+    nodeModulesDir = file("${project.projectDir}/webapp")
 }
 
 task webpack(type: NodeTask, dependsOn: 'npmInstall') {
@@ -50,27 +50,22 @@ task webpack(type: NodeTask, dependsOn: 'npmInstall') {
     script = file("${node.nodeModulesDir}/node_modules/webpack/bin/webpack.js")
     args = ['--display-modules']
     doLast {
-        File bundle = new File("${node.nodeModulesDir}/bundle.js")
-        if (!bundle.exists()) {
-            throw new GradleException(bundle.path + " is not created")
-        }
-        def destDir = "$buildDir/static-ui"
-        File dest = new File(destDir)
-        if (!dest.exists() && !dest.mkdirs()) {
-            throw new GradleException("Failed to create " + dest.path)
-        }
-        bundle.renameTo "$destDir/bundle.js"
-        File bundleMap = new File("${node.nodeModulesDir}/bundle.js.map")
-        if (bundleMap.exists()) {
-            bundleMap.renameTo "$destDir/bundle.js.map"
-        }
         copy {
             from node.nodeModulesDir
-            into destDir
+            into "$buildDir/static-ui"
+            include 'bundle.js'
+            include 'bundle.js.map'
             include '*.html'
             include '*.png'
         }
+        delete "${node.nodeModulesDir}/bundle.js"
+        delete "${node.nodeModulesDir}/bundle.js.map"
     }
 }
 
-build.dependsOn(webpack)
+war.dependsOn(webpack)
+
+war {
+    from "$buildDir/static-ui"
+    webXml = file('webapp/WEB-INF/web.xml')
+}

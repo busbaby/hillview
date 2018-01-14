@@ -2,4 +2,4 @@ build/
 *.iml
 .idea/
 .gradle/
-src/main/webapp/node_modules/
+webapp/node_modules/
