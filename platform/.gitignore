@@ -3,4 +3,3 @@ out/
 test.log*
 *.iml
 .idea/
-.gradle/

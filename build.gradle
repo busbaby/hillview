@@ -1,0 +1,6 @@
+allprojects {
+    group = 'org.hillview'
+    repositories {
+        jcenter()
+    }
+}
