@@ -60,6 +60,10 @@ task webpack(type: NodeTask, dependsOn: 'npmInstall') {
             throw new GradleException("Failed to create " + dest.path)
         }
         bundle.renameTo "$destDir/bundle.js"
+        File bundleMap = new File("${node.nodeModulesDir}/bundle.js.map")
+        if (bundleMap.exists()) {
+            bundleMap.renameTo "$destDir/bundle.js.map"
+        }
         copy {
             from node.nodeModulesDir
             into destDir
